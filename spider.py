@@ -48,13 +48,15 @@ for item in soup.select(items_Tag):
             soup_content = BeautifulSoup(res_content.text, 'lxml')
             contents = soup_content.select(content_Tag)
             content_Text = ""
+            [s.extract() for s in soup('blockquote')]
 
             for i in range(len(contents)):
                 if len(pattern_cont.findall(str(contents[i]))) > 3:
                     # 去除 span, div 等 tag
-                    content_Text = content_Text + re.sub(r"\<\/?[a-zA-Z]{2,}([ a-zA-Z]+\=[\"\'][a-zA-Z\-\:\; ]{0,}[\"\']){0,}\>|(\\n){1,}", "", str(contents[i]))
+                    content_Text = content_Text + str(contents[i].get_text()).replace("\n", "")
+                    # r"\<\/?[a-zA-Z]{2,}([ a-zA-Z]+\=[\"\'][a-zA-Z\-\:\; ]{0,}[\"\']){0,}\>|(\\n)+"
                     #replace("(\</?(div)|(span) ([a-zA-Z]+\=[\"\'][a-zA-Z\:\;]+[\"\'])\>)|(\\n)", "")
-            content_Text = content_Text + "<p>資料來源 : <a href='" + str(content_url) + "'>" + str(title_Text) + "</a></p>"
+            content_Text = content_Text # + "<p>資料來源 : <a href='" + str(content_url) + "'>" + str(title_Text) + "</a></p>"
             Json_data[1].append({"Title": title_Text, "Summary" : str(summary_Text), "Content" : str(content_Text), "URL" : str(content_url)})
 
 # 以 WebSpider-ithome-yyyymmdd.json 格式儲存
